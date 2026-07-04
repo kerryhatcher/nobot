@@ -54,13 +54,17 @@ Other content tells include over-reliance on lists and bullet points (often with
 
 The detection tool landscape splits into three broad approaches: **statistical methods**, **deep learning classifiers**, and **watermarking systems**. Each has distinct strengths and serious limitations.
 
-**GPTZero**, the most widely validated tool, uses a seven-component system combining perplexity and burstiness calculations, deep learning models trained on AI vs. human text, text search capabilities, and sentence-level detection with color-coded highlights. On the RAID benchmark (the largest standardized test, with 6+ million generations across 11 models), GPTZero detected **95.7% of AI texts with only a 1% false positive rate**. Its self-reported benchmark on 3,000 samples claims 99.3% accuracy with a 0.24% false positive rate. Independent tests show accuracy dropping to **80–85% on heavily edited or paraphrased content**, and performance degrades on text under 300 words.
+**GPTZero**, the most widely validated tool, uses a seven-component system combining perplexity and burstiness calculations, deep learning models trained on AI vs. human text, text search capabilities, and sentence-level detection with color-coded highlights. Its numbers are a case study in why source type matters: vendor self-reporting claims **99.39% accuracy with a 0.00% false positive rate**, and a transparent self-submission to the RAID benchmark (the largest standardized test, with 6+ million generations across 11 models) showed **95.7% detection at a 1% false positive rate**. Independent testing tells a less flattering story — roughly **87% accuracy with a ~10% false positive rate** — and accuracy drops further, to 80–85%, on heavily edited or paraphrased content, with performance degrading on text under 300 words. A GPTZero blog post claiming it beats Pangram "on the Chicago Booth benchmark" is GPTZero's own re-run of that benchmark, not the independent study itself. GPTZero was acquired by Superhuman/Grammarly in June 2026.
 
-**Originality.ai** uses NLP-based algorithms with entropy analysis and deep learning models retrained frequently on outputs from major LLMs. Self-reported accuracy reaches 99%, and a meta-analysis of 13 peer-reviewed studies found 98–100% average accuracy. However, GPTZero's own benchmark found Originality.ai at 83% accuracy with a 4.79% false positive rate, and one independent test measured just 76% overall accuracy. It claims strong performance (95–97%) on paraphrased content.
+**Originality.ai** uses NLP-based algorithms with entropy analysis and deep learning models retrained frequently on outputs from major LLMs. The vendor's own meta-analysis of 13 studies claims **97–100% average accuracy**; independent testing by the University of Chicago Booth School found substantially lower real-world performance, **roughly 83–89% accuracy**. It claims strong performance (95–97%) on paraphrased content, though that figure has not been independently replicated.
 
-**Turnitin's AI detection**, integrated into the plagiarism infrastructure used by thousands of universities, produces sentence-level and document-level predictions. It correctly identifies 77% of fully AI-generated texts and 93% of fully human texts (86% overall), but **deliberately misses approximately 15%** of AI text to keep its false positive rate low. Real-world false positive rates run **2–5%**, not the claimed 1%. Vanderbilt University disabled Turnitin's AI detector in August 2023, citing concerns about false positives and bias against non-native English speakers. Accuracy on heavily edited AI text drops to just **20–63%**.
+**Turnitin's AI detection**, integrated into the plagiarism infrastructure used by thousands of universities, produces sentence-level and document-level predictions. It correctly identifies 77% of fully AI-generated texts and 93% of fully human texts (86% overall), but **deliberately misses approximately 15%** of AI text to keep its false positive rate low. Turnitin reports under 1% false positive rate at the document level; that figure and the "2–5% real-world" figure describe different units — document-level vs. sentence-level vs. field testing — rather than actually contradicting each other, so check which metric a given number describes before comparing tools. Accuracy on heavily edited AI text drops to just **20–63%**. Vanderbilt University disabled Turnitin's AI detector in August 2023, citing concerns about false positives and bias against non-native English speakers — the first in a wave of institutional pullback (see below). Turnitin expanded model coverage to GPT-5, Gemini 2.5, and Claude 4.5 output, and added Spanish-language detection, in February 2026.
 
-**ZeroGPT** claims 98%+ accuracy but independent scientific testing found **35–65% accuracy**, with an average 30% AI probability assigned to human-written text — a troubling false positive rate. It remains free and popular but is the least reliable major tool.
+**ZeroGPT** claims 98%+ accuracy but independent testing found **67–85% real-world accuracy with a 14.6–33% false positive rate** — rising to a **62.5% false positive rate on non-native English text specifically**. It remains free and popular but is the least reliable major tool.
+
+**Pangram Labs**, by contrast, is the one tool that has held up under independent scrutiny. A University of Chicago Booth School / Becker Friedman Institute study (WP 2025-116) found roughly **100% detection with an essentially-zero false positive rate** — the paper reports an FPR policy cap of ≤0.005, not the "1-in-10,000" figure commonly repeated online, which appears nowhere in the underlying data — and an error rate roughly **38x lower** than competing tools. Pangram's own figures claim 99.98% accuracy, including 97% detection of QuillBot-paraphrased output (Pangram 3.0, December 2025), and the tool now offers a four-tier AI-assistance classification rather than a binary AI/human verdict.
+
+Two newer entrants are worth tracking. **Winston AI** posted roughly a **4% false positive rate** in 2026 independent testing. **Sapling** claims 97%+ accuracy with under 3% false positives, but an independent 2026 benchmark of 2,400 samples measured just **76% accuracy** — its most attractive feature is a generous free API tier, not necessarily its accuracy.
 
 **OpenAI's own text classifier**, launched January 2023, correctly identified only **26% of AI-written text** while incorrectly flagging 9% of human text. It was discontinued after six months. OpenAI acknowledged "it is impossible to reliably detect all AI-written text."
 
@@ -68,14 +72,16 @@ The detection tool landscape splits into three broad approaches: **statistical m
 
 **Stylometric analysis** — measuring features like type-token ratio, hapax legomena, syntactic complexity, and function word distributions across 74+ features — achieved up to **0.98 accuracy** in binary classification between Wikipedia and GPT-4 text using LGBM classifiers. Intriguingly, paraphrased text was sometimes *more* detectable than the original, not less.
 
-| Tool | Pure AI accuracy | Paraphrased AI | False positive rate | Status |
-|---|---|---|---|---|
-| GPTZero | 95–99% | 80–85% | 0.2–2% | Active, RAID-validated |
-| Originality.ai | 76–99% | 95–97% (claimed) | 1–5% | Active |
-| Turnitin | 77–98% | 20–63% | 2–5% | Active, controversial |
-| ZeroGPT | 35–86% | Low | 10–35% | Active, unreliable |
-| Pangram Labs | High | Strong (claimed) | Near-zero | Active |
-| OpenAI Classifier | 26% | N/A | 9% | Discontinued |
+| Tool | Independent figures | Vendor claims | Notes |
+|---|---|---|---|
+| Pangram | ~100% detection, FPR "essentially 0" (≤0.005 policy cap); error rate ~38x lower than other tools | 99.98%, incl. 97% on QuillBot-paraphrased output (Pangram 3.0, Dec 2025) | Only tool meeting the study's policy constraint; four-tier AI-assistance classification |
+| GPTZero | ~87% acc., ~10% FPR; 95.7% at 1% FPR on RAID (transparent self-submission) | 99.39% acc., 0.00% FPR | Acquired by Superhuman/Grammarly, June 2026 |
+| Originality.ai | ~83–89% (Chicago Booth) | 97–100% (vendor meta-analysis) | |
+| Turnitin | 77–98% pure AI; 20–63% on heavily edited AI | <1% doc-level FPR (see note above on units) | GPT-5/Gemini 2.5/Claude 4.5 coverage + Spanish detection added Feb 2026 |
+| ZeroGPT | 67–85% real-world; 14.6–33% FPR (62.5% FPR on non-native English) | 98% | Weakest major tool |
+| Winston AI | ~4% FPR (2026 testing) | — | New entrant |
+| Sapling | 76% (independent, 2026) | 97%+, <3% FPR | Free tier is generous |
+| OpenAI Classifier | 26% | N/A | Discontinued 2023 |
 
 ---
 
