@@ -117,6 +117,8 @@ Adversarial research confirms the vulnerability — though the picture has moved
 
 NIST's GenAI Pilot Study (NIST AI 700-1, June 2025) offered a slightly more optimistic note, finding detection models "remain reasonably effective" and that discriminator systems improved over multiple testing rounds. But the overall research trajectory points toward a detection arms race that favors the generators.
 
+Recent benchmark work continues this cautionary pattern. **DetectRL-X** (ACL 2026) tested over **3.46 million samples across 8 languages**, revealing that detector performance varies sharply by language — a reminder that universal accuracy claims obscure real regional gaps. A **Sultan Qaboos University study** (International Journal for Educational Integrity, February 2026) found leading detectors scoring only **69% and 61%** overall, with hybrid human-AI text detection dropping to near 0%; its precise figures are partially verified due to a paywall, but the study itself is real, and its conclusion — that no detector tested possessed sufficient reliability for academic misconduct determinations — echoes Weber-Wulff's earlier assessment. On the more promising side, **DivEye** (TMLR 2026, IBM) demonstrated that diversity- and surprisal-based detection can achieve a **33.2% improvement** over zero-shot baselines while remaining comparatively robust to paraphrasing.
+
 ---
 
 ## Why AI writing fails: the structural weaknesses
