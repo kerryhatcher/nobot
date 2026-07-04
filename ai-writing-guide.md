@@ -116,6 +116,20 @@ None of these tools should be run in isolation. The verified consensus across th
 
 ---
 
+## Free detection APIs for programmatic testing
+
+Several services offer free API tiers for programmatic testing:
+
+- **Sapling** — **50,000 chars/day** free via API key; best free tier of the majors.
+- **GPTZero** — limited free API testing without an account (the "10,000 words/month" figure often cited is unverified).
+- **Copyleaks** — **25,000 free chars/month**, with SDKs in **6 languages**.
+- **Winston AI** — **2,000 free credits** (**1 credit/word**).
+- **ZeroGPT** — free tier with character limits reported inconsistently (**2,000–15,000** range); the accuracy caveats discussed above still apply.
+- **Hugging Face Inference API** — roughly **300 free requests/hour**, but only for obsolete GPT-2-era detector models; not useful for modern text.
+- **Pangram — explicitly not free** (**4 web checks/day**; API **~$0.05 per 1,000 words**). Worth noting since it's the accuracy leader discussed above.
+
+---
+
 ## Institutional pullback and the legal backlash
 
 Mounting concerns over false positives and demographic bias have prompted a wave of institutional pullback that extends well beyond Vanderbilt's early 2023 decision to disable detection technology. **Australian Catholic University** abandoned its AI detector in 2024 after approximately **6,000 misconduct referrals** triggered by detection flags proved to be false positives, with roughly 90 percent of flagged cases exonerating the accused under human review. The University of Waterloo disabled its detector in September 2025 following internal testing that exposed a critical failure: text confirmed to be entirely human-written scored a **100 percent AI likelihood** in their system. Similar disablements followed at the University of Cape Town in October 2025 and Curtin University in January 2026, with the latter explicitly citing equity and bias concerns affecting non-native English speakers. Advocacy-adjacent reporting has circulated figures of "50+ universities" globally or "31 in the U.S." having disabled detection tools; these should be treated as indicative counts rather than independently verified tallies.
