@@ -93,6 +93,14 @@ In 2025, researchers at Rumi Technologies discovered GPT-o3 and o4 mini models e
 
 ---
 
+## Institutional pullback and the legal backlash
+
+Mounting concerns over false positives and demographic bias have prompted a wave of institutional pullback that extends well beyond Vanderbilt's early 2023 decision to disable detection technology. **Australian Catholic University** abandoned its AI detector in 2024 after approximately **6,000 misconduct referrals** triggered by detection flags proved to be false positives, with roughly 90 percent of flagged cases exonerating the accused under human review. The University of Waterloo disabled its detector in September 2025 following internal testing that exposed a critical failure: text confirmed to be entirely human-written scored a **100 percent AI likelihood** in their system. Similar disablements followed at the University of Cape Town in October 2025 and Curtin University in January 2026, with the latter explicitly citing equity and bias concerns affecting non-native English speakers. Advocacy-adjacent reporting has circulated figures of "50+ universities" globally or "31 in the U.S." having disabled detection tools; these should be treated as indicative counts rather than independently verified tallies.
+
+The legal system has begun imposing concrete consequences for institutional reliance on flawed detection verdicts. Five U.S. federal lawsuits have been filed since September 2024 challenging false-positive accusations issued through AI detectors: proceedings at Yale, the University of Minnesota (which seeks **$1.335 million** in damages), the University of Michigan, Hingham, and Adelphi, with the last of these cases dismissed. Among the identified plaintiffs, three are non-native English speakers, underscoring the demographic dimensions of detection failure documented above. Meanwhile, the publishing industry has adopted a cautious middle position: major academic publishers including Elsevier, Springer Nature, and Science now require authors to disclose AI tool use in their submissions but have explicitly declined to screen manuscripts with AI detectors as of 2026.
+
+---
+
 ## What the research literature actually says
 
 The academic consensus from 2023–2026 is sobering for anyone relying on detection tools for high-stakes decisions.
