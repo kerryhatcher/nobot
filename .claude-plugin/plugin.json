@@ -1,0 +1,11 @@
+{
+  "name": "nobots",
+  "version": "0.1.0",
+  "description": "Humanize prose as Claude writes it, detect AI-sounding text on demand, and audit documents for AI writing tells — grounded in a research-backed field guide.",
+  "author": {
+    "name": "Kerry Hatcher",
+    "email": "kerry@kerryhatcher.com"
+  },
+  "keywords": ["writing", "ai-detection", "editing", "style", "prose"],
+  "license": "MIT"
+}
