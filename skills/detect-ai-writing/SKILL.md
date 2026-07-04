@@ -2,8 +2,8 @@
 name: detect-ai-writing
 description: This skill should be used when the user asks to "detect AI writing", "check if this is AI-generated", "is this text written by AI", "audit this text for AI tells", "run detect-ai-writing", or provides a piece of text or file and asks whether it reads as machine-written. Invocable directly as a user command (e.g. "/nobots:detect-ai-writing path/to/file.md" or pasted text) as well as triggering automatically on these phrases.
 argument-hint: [text or file-path]
-allowed-tools: Read, Task
-version: 0.2.0
+allowed-tools: Read, Task, Bash
+version: 0.3.0
 ---
 
 Analyze a piece of text against the vocabulary, statistical, and content-level fingerprints of AI-generated writing, then report a confidence tier with concrete evidence — never a bare "yes/no" verdict.
@@ -46,3 +46,9 @@ Produce (or relay, if `ai-tell-quickcheck` already produced one) a structured re
 ## Step 5: Recommend a tool when the read is borderline
 
 If the text is long-form, high-stakes, or the manual read lands in "mixed signals," recommend a specific external check rather than pushing the manual analysis further. Consult `$CLAUDE_PLUGIN_ROOT/ai-detection-tools.md` for current free-tier APIs (GPTZero, Winston AI, Copyleaks, Sapling, ZeroGPT, Pangram, Hugging Face-hosted classifiers) and open-source/offline options, and name the one or two best suited to the text's length and stakes. This skill does not call those APIs itself — it points to them.
+
+## Step 6: Deep stylometric analysis (only when explicitly requested)
+
+If the user explicitly asks for a "detailed," "deep," or "thorough" analysis (rather than the default quick read), run `$CLAUDE_PLUGIN_ROOT/scripts/deep_stylometry.py <file-path-or-->` via Bash. It uses spaCy, textdescriptives, and pybiber to compute real burstiness, lexical diversity (MTLD-style), dependency-clause complexity, POS proportions, readability grade level, entropy-per-token, and a curated set of Biber register features — actual measurements, not the eyeballed proxies from Steps 2-3. Fold its output into the report as corroborating evidence, using its own field-level `relevance` annotations to explain what each number means; its `notes` field spells out what it deliberately doesn't claim (no calibrated cutoffs, no LLM-equivalent perplexity).
+
+Warn the user before running it the first time on a machine: it installs a real dependency set (spaCy, a language model, textdescriptives, pybiber) and can take 1-3 minutes on that first call, then is fast on every call after (`uv` caches it). Never invoke this automatically for the default case — it's opt-in rigor, not the standard path, and it does not apply to `ai-tell-quickcheck`, which deliberately stays cheap.

@@ -52,3 +52,4 @@ A handful of vocabulary hits alone is not evidence. Structural and content signa
 **Edge Cases:**
 
 - If the text is clearly too long or spans multiple files for a quick pass (over ~500 words, or more than one file), say so explicitly and recommend the caller use ai-tell-reviewer instead of forcing a shallow read.
+- This agent deliberately never shells out to `scripts/deep_stylometry.py` (the spaCy/pybiber-based deep analysis) — that script's first-run install takes 1-3 minutes, which would defeat the entire point of being the cheap, fast path. If the caller wants that level of rigor even on a short passage, that's a deliberate escalation the calling skill should do directly rather than something this agent does on its own.
