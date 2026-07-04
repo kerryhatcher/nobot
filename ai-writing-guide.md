@@ -130,6 +130,12 @@ Several services offer free API tiers for programmatic testing:
 
 ---
 
+## Where to find the benchmarks
+
+**RAID** is the standard benchmark for evaluating AI text detectors; its official home is **raid-bench.xyz** and the **liamdugan/raid** GitHub repository. Critically, **its-ai.org** presents itself as the "RAID Benchmark Official" page but is actually a competing vendor's marketing page — a distinction worth knowing before citing benchmark figures from it. For paraphrase-attack evaluation specifically, consult **PADBen**; for multilingual detector evaluation, consult **DetectRL-X**.
+
+---
+
 ## Institutional pullback and the legal backlash
 
 Mounting concerns over false positives and demographic bias have prompted a wave of institutional pullback that extends well beyond Vanderbilt's early 2023 decision to disable detection technology. **Australian Catholic University** abandoned its AI detector in 2024 after approximately **6,000 misconduct referrals** triggered by detection flags proved to be false positives, with roughly 90 percent of flagged cases exonerating the accused under human review. The University of Waterloo disabled its detector in September 2025 following internal testing that exposed a critical failure: text confirmed to be entirely human-written scored a **100 percent AI likelihood** in their system. Similar disablements followed at the University of Cape Town in October 2025 and Curtin University in January 2026, with the latter explicitly citing equity and bias concerns affecting non-native English speakers. Advocacy-adjacent reporting has circulated figures of "50+ universities" globally or "31 in the U.S." having disabled detection tools; these should be treated as indicative counts rather than independently verified tallies.
