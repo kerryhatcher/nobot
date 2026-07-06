@@ -55,6 +55,40 @@ AI-generated text uses em dashes roughly 10-50x more often than human writing: e
 
 After a first draft, read it aloud, mentally or literally. Flag anything that sounds like a press release. Restore any missing personal or concrete detail. Rewrite any sentence that doesn't sound like something an actual person with this specific voice would say. This final pass matters more than any individual rule above. The rules describe what tends to go wrong; the read-aloud test catches what they miss.
 
+## Apply these in leverage order
+
+The edits are not equal. Spend effort top-down: a genuine rewrite beats everything, structural variation beats vocabulary swaps, and single-word substitutions barely register.
+
+1. Rewrite, do not lightly edit. A real pass in your own words breaks the most signals at once.
+2. Vary structure and tone across sections (see below).
+3. Add radical specificity: real names, numbers, dates.
+4. Break sentence rhythm and grammar on purpose.
+5. Swap the tell vocabulary last. It is the weakest lever.
+
+## Vary tone across sections
+
+Detectors that survive paraphrase read the whole document, not one line. The body is where machine sameness shows most, because intros and conclusions get edited and bodies do not. Shift register on purpose between the opening, the middle, and the close. Let one section run terse and another loosen up. Uniform tone across every paragraph is itself a tell.
+
+## Generation settings, if you control them
+
+When you can set decoding parameters, nudge them off the defaults: nucleus sampling, a repetition penalty near 1.2, and a decoding strategy other than plain greedy. Greedy, low-temperature output is the most predictable and the easiest to flag. Cheap, high-leverage, worth doing before any hand-editing. Also add `showcase`, `showcasing`, `emphasize`, and `emphasizing` to the banned list; they are the current-generation replacements for the older tells.
+
+## What does not move the needle
+
+Skip the effort here. Swapping one flagged word for a synonym while leaving the sentence structure intact. Asking a model to "write less like AI" without changing anything concrete. Assuming a short passage is safe: short text cannot carry the specificity and structural variation that beat the durable detectors, so it stays easy to flag.
+
+## Pre-send checklist
+
+- No banned vocabulary (delve, leverage, seamless, showcase, emphasize, and the rest).
+- No em dashes used as connectors.
+- Sentence lengths vary; no run of three similar-length sentences.
+- Tone shifts at least once across sections.
+- At least one concrete name, number, or date a reader could check.
+- No ghost citations ("studies show") without a real source.
+- No rule-of-three padding, no "it's not just X, it's Y".
+- Read it aloud once. Anywhere you would not say it, rewrite it.
+
+
 ## When in doubt
 
 For deeper grounding on any specific claim above, whether a rule still holds, what the research actually measured, or how confident to be about a given tell, read `$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md`. It documents the vocabulary, statistical (perplexity/burstiness), and content-level signatures in full, with sourcing and caveats about which signals are well-validated versus internet folklore.

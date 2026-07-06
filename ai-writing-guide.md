@@ -183,6 +183,17 @@ When using AI as a writing tool, provide detailed persona definitions, explicit 
 
 ---
 
+## Detector advances since 2024: cross-model, sequence, and structural
+
+Three newer families matter because they survive the easy dodges (paraphrase, vocabulary swaps) that beat the older perplexity-threshold detectors.
+
+**Cross-model origin attribution (Sniffer, arXiv 2304.14072).** Instead of asking "is this AI," it asks "which model wrote this." It scores text under a panel of models and builds a fingerprint from where they disagree. Perplexity fingerprints are model-specific and survive paraphrase and quality gains, so fooling one model does nothing. Instruction-tuned models trace to their training-data origin: text from models tuned on ChatGPT output classifies as ChatGPT, not the base model. The lesson for evasion is blunt. Beating a single scorer is not enough.
+
+**Token-probability sequence dynamics.** Older detectors look at the level or variance of token probability. Newer ones look at how it moves across the text. Human token probability jumps around abruptly; machine text stays smooth. Fast-DetectGPT and Binoculars push this to high accuracy at very low false-positive rates (Binoculars reports over 90% at 0.01% FPR). DALD, Lastde and Lastde++, and TOCSIN add conditional-probability curvature, sequence-dynamics, and token-cohesion variants. RAIDAR detects by rewriting the text and measuring how much a model changes it, which sidesteps the non-native-speaker bias that plagues perplexity detectors.
+
+**Durable structural detectors.** The most paraphrase-resistant signals are structural, not lexical. Beyond Checkmate scores tone and style across segments of a document; the body is the "creative chokepoint" where machine sameness shows even when the intro and conclusion have been edited. StoryScope reads narrative and discourse structure, reports over 90% macro-F1, and survives style-editing, with concrete human-versus-machine ratios (humans state an explicit theme less often and name specific works more often). These operationalize the long-standing observation that structure outlasts vocabulary.
+
+
 ## Conclusion: an arms race the detectors are losing
 
 The research paints a clear picture: AI text detection works reasonably well against raw, unedited output from known models, but accuracy collapses against paraphrased, edited, or adversarially crafted text — Perkins et al. (2024) measured a drop from 39.5% baseline accuracy to as low as **17.4%** against adversarial humanization, and detector-guided paraphrasing attacks reduce detection by 64.49–98.96% depending on architecture. The theoretical ceiling for detection falls as models improve, and the commercial ecosystem of "humanizer" tools continues to erode whatever advantage detectors temporarily gain. False positive rates disproportionately harm non-native English speakers (61.3% in the 2023 Stanford study; the mechanism is confirmed by 2025–26 follow-ups even as the exact figure ages), and human judges perform barely above coin-flip accuracy.
