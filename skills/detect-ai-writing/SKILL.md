@@ -30,6 +30,17 @@ Skip this step and Step 3 if Step 1 dispatched to `ai-tell-quickcheck` — use i
 
 **Content tells** — look for superficiality dressed as depth (a claim followed by "...highlighting its lasting influence" with no supporting specifics), absence of a distinct personal voice or opinion, excessive even-handedness ("there are many perspectives"), generic examples instead of named specifics, ghost citations, and a formulaic claim → elaboration → example → transition rhythm repeating across paragraphs.
 
+## Step 2b: Structural and narrative checks (weight these highest)
+
+Vocabulary and burstiness are easy to fake, so weight structure higher than either. Look for:
+
+- Uniform tone across sections. Compare the body against the intro and conclusion. Machine text stays flat where a human loosens up, and the body is the "creative chokepoint" that gives it away even when the ends are polished.
+- Narrative and discourse sameness: an explicitly stated theme where a human would imply one, few named specific works or sources, formulaic paragraph shape repeated down the page.
+- Smooth token-probability rhythm. You cannot see this by eye, but if an external detector reports it (Fast-DetectGPT, Binoculars, DALD, Lastde, TOCSIN), treat a "too smooth" reading as a real signal, not noise.
+
+Remember the ceiling: paraphrase and a genuine human edit collapse most detectors, so a clean score is not proof of human authorship. Say so in the verdict.
+
+
 ## Step 3: Weigh the evidence, don't just tally it (inline path only)
 
 Per the underlying research (`$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md`), vocabulary tells are the weakest and most time-bound signal — treat them as corroborating, not decisive. Structural signals (low sentence-length variation, high dependent-clause density, near-zero rhetorical questions, em-dash frequency) and content-level signals (superficiality, absence of voice, ghost citations) are more robust and should carry more weight. A text with zero banned words can still be heavily AI-patterned structurally, and a human writer can legitimately use words like "utilize" or "delve" a handful of times — isolated hits are not evidence on their own.
