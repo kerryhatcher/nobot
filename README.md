@@ -31,14 +31,31 @@ None of it is guesswork. Everything traces to a research-backed field guide bund
 
 ## Install
 
-`nobots` is a local Claude Code plugin. Point Claude Code at a clone of it:
+nobots ships through the [hatch-plugins marketplace](https://github.com/kerryhatcher/hatch-plugins). You don't need to go read that repo. From a Claude Code session, add the marketplace and install:
 
-```bash
-git clone <your-remote>/nobots.git
-claude --plugin-dir /path/to/nobots
+```
+/plugin marketplace add kerryhatcher/hatch-plugins
+/plugin install nobots@hatch-plugins
 ```
 
-If you're already inside a local clone, `/plugin marketplace add ./` works too. Hooks load at session start, so after editing `hooks/hooks.json` or the hook script, restart the session. The hook needs `uv` on `PATH`; if it's missing, the script no-ops instead of blocking your edit.
+Restart the session afterward so the hook loads. The hook needs `uv` on `PATH`; without it the background scan quietly no-ops instead of blocking your edit.
+
+**Hacking on it locally?** Point Claude Code at a clone instead:
+
+```
+git clone https://github.com/kerryhatcher/nobot.git
+claude --plugin-dir /path/to/nobot
+```
+
+## Use it
+
+Nothing to configure. Once it's installed:
+
+- **Writing.** Ask Claude for anything long-form (a README, docs, a post) and `humanize-writing` shapes the prose as it drafts. No command needed.
+- **Checking.** Ask "is this AI-written?" or run `/nobots:detect-ai-writing path/to/file.md`. You get a confidence tier with reasons, never a bare yes or no.
+- **Auditing.** After a big document, ask for an `ai-tell-reviewer` pass for a line-anchored, file-wide report.
+- **Ambient.** Every `.md` / `.txt` you write is scanned in the background. If the prose drifts toward boilerplate, Claude gets a nudge to run a humanizing pass. It never blocks you.
+
 
 ## What it does
 
