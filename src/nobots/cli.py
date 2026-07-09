@@ -150,6 +150,16 @@ def tui():
     run_tui()
 
 
+@app.command()
+def mcp():
+    """Launch the MCP server (detect/analyze/score/humanize tools). Requires [mcp]."""
+    try:
+        from nobots.mcp.server import run_server
+    except ImportError:
+        raise _missing_extra("mcp", "mcp")
+    run_server()
+
+
 @app.callback()
 def _root(
     guide: bool = typer.Option(False, "--guide", help="Print the packaged field guide and exit."),
