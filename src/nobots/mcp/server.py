@@ -24,19 +24,23 @@ def detect(text: str) -> dict:
     }
 
 
+def _missing_extra(extra: str) -> str:
+    return f"{extra} needs the {extra} extra: install with: uvx --from 'nobots[{extra}]' nobots mcp"
+
+
 @mcp.tool()
 def analyze(text: str) -> dict:
     """Deep stylometry report. Requires the [analyze] extra."""
     try:
         from nobots.core.stylometry import analyze_text
     except ImportError:
-        return {"error": "analyze needs the analyze extra: uv sync --extra analyze"}
+        return {"error": _missing_extra("analyze")}
     try:
         return analyze_text(clean_prose(text))
     except ImportError:
         # analyze_text imports textdescriptives lazily, so the top-level import
         # above can succeed even when [analyze] isn't installed.
-        return {"error": "analyze needs the analyze extra: uv sync --extra analyze"}
+        return {"error": _missing_extra("analyze")}
 
 
 @mcp.tool()
@@ -45,11 +49,11 @@ def score(text: str) -> dict:
     try:
         from nobots.core.models import score_text
     except ImportError:
-        return {"error": "score needs the models extra: uv sync --extra models"}
+        return {"error": _missing_extra("models")}
     # score_text imports torch lazily, so the top-level import above succeeds even
     # when [models] isn't installed; probe explicitly so we still emit the hint.
     if importlib.util.find_spec("torch") is None or importlib.util.find_spec("transformers") is None:
-        return {"error": "score needs the models extra: uv sync --extra models"}
+        return {"error": _missing_extra("models")}
     return score_text(clean_prose(text))
 
 
@@ -59,12 +63,14 @@ def humanize(text: str) -> str:
     try:
         from nobots.humanize.agent import build_default_model, humanize_text
     except ImportError:
-        return "error: humanize needs the humanize extra: uv sync --extra humanize"
+        return f"error: {_missing_extra('humanize')}"
+    from nobots.config import humanize_settings
+
     try:
-        model = build_default_model()
-        return humanize_text(text, model=model)
+        built = build_default_model(humanize_settings())
+        return humanize_text(text, model=built)
     except (ModuleNotFoundError, ImportError):
-        return "error: humanize needs the humanize extra: uv sync --extra humanize"
+        return f"error: {_missing_extra('humanize')}"
     except RuntimeError as e:
         return f"error: {e}"
 
