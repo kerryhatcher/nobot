@@ -5,19 +5,12 @@ AI writing tells and shows families + summary. Pure UI — core logic lives
 in nobots.core.detect and nobots.core.prose.
 """
 
-from textual.app import App, ComposeResult, RenderableType
+from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.widgets import Header, Footer, TextArea, Static
 
 from nobots.core.detect import detect_text
 from nobots.core.prose import clean_prose
-
-
-class DetectDisplay(Static):
-    """Renders live detection results."""
-
-    def render(self) -> RenderableType:
-        return self.renderable
 
 
 class NobotsTUI(App[None]):
@@ -43,12 +36,6 @@ class NobotsTUI(App[None]):
         width: 1fr;
         height: 1fr;
     }
-
-    DetectDisplay {
-        width: 1fr;
-        height: 1fr;
-        overflow: auto;
-    }
     """
 
     BINDINGS = [("q", "quit", "Quit")]
@@ -58,35 +45,23 @@ class NobotsTUI(App[None]):
         yield Header()
         with Vertical():
             yield TextArea(id="input", language="markdown", show_line_numbers=True)
-            yield DetectDisplay(id="output")
+            yield Static("Type here to scan for AI tells...", id="output")
         yield Footer()
 
     def on_mount(self) -> None:
         """Initialize on mount."""
-        input_area = self.query_one("#input", TextArea)
-        input_area.focus()
-        output = self.query_one("#output", DetectDisplay)
-        output.renderable = "Type here to scan for AI tells..."
-        self.set_interval(0.5, self.update_detection)
+        self.query_one("#input", TextArea).focus()
 
-    def update_detection(self) -> None:
-        """Poll and update detection results."""
-        try:
-            input_area = self.query_one("#input", TextArea)
-            output = self.query_one("#output", DetectDisplay)
-        except Exception:
-            return
-
-        text = input_area.text
+    def on_text_area_changed(self, event: TextArea.Changed) -> None:
+        """Re-run detection whenever the input text changes."""
+        output = self.query_one("#output", Static)
+        text = event.text_area.text
         if not text.strip():
-            output.renderable = "Type here to scan for AI tells..."
+            output.update("Type here to scan for AI tells...")
             return
 
-        # Clean and detect
-        cleaned = clean_prose(text)
-        result = detect_text(cleaned)
+        result = detect_text(clean_prose(text))
 
-        # Format output
         lines = [f"AI Tells Found: {result.tells_found}"]
         lines.append(f"Signals Agree: {result.agree}/{result.quorum}")
         if result.families:
@@ -102,7 +77,7 @@ class NobotsTUI(App[None]):
                     val_str = f"{val:.2f}" if isinstance(val, float) else str(val)
                     lines.append(f"  • {key}: {val_str}")
 
-        output.renderable = "\n".join(lines)
+        output.update("\n".join(lines))
 
 
 def run_tui() -> None:
