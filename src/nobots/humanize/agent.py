@@ -39,9 +39,25 @@ def build_default_model(settings: dict | None = None):
 def humanize_text(text: str, model=None) -> str:
     """Rewrite `text` to remove AI tells using a Pydantic AI agent."""
     from pydantic_ai import Agent
+    from pydantic_ai.exceptions import ModelAPIError, ModelHTTPError
 
     if model is None:
         model = build_default_model()
     agent = Agent(model=model, system_prompt=_system_prompt())
-    result = agent.run_sync(text)
+    try:
+        result = agent.run_sync(text)
+    except ModelHTTPError:
+        # A real HTTP-status response (auth/4xx/5xx) means Ollama IS reachable;
+        # don't mask it behind an "is Ollama running?" message.
+        raise
+    except ModelAPIError as e:
+        # ModelAPIError (not the ModelHTTPError subclass) is what pydantic-ai
+        # raises for transport-level failures (e.g. openai.APIConnectionError,
+        # which itself wraps httpx.ConnectError) -- i.e. no response came back.
+        base_url = getattr(model, "base_url", "the configured endpoint")
+        raise RuntimeError(
+            f"could not reach the humanize model at {base_url}: {e}. "
+            "Is Ollama running? Start it with `ollama serve` or set "
+            "[humanize] in ~/.config/nobots/config.toml."
+        ) from e
     return result.output
