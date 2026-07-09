@@ -7,6 +7,7 @@ from pydantic_ai.models.test import TestModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from nobots.humanize.agent import humanize_text
+from nobots.config import humanize_settings
 
 
 def test_humanize_invokes_model_and_returns_text():
@@ -24,3 +25,21 @@ def test_humanize_raises_runtime_error_when_ollama_unreachable():
 
     with pytest.raises(RuntimeError, match="Ollama"):
         humanize_text("Delve into the multifaceted tapestry of synergy.", model=model)
+
+
+def test_humanize_settings_precedence(monkeypatch, tmp_path):
+    cfg = tmp_path / "config.toml"
+    cfg.write_text('[humanize]\nmodel = "mistral"\nbase_url = "http://x:1/v1"\n')
+    monkeypatch.setattr("nobots.config._config_path", lambda: cfg)
+
+    # config overrides default
+    s = humanize_settings()
+    assert s["model"] == "mistral" and s["base_url"] == "http://x:1/v1"
+
+    # CLI flag overrides config
+    s = humanize_settings(cli_model="llama3.1")
+    assert s["model"] == "llama3.1"
+
+    # default when nothing set
+    monkeypatch.setattr("nobots.config._config_path", lambda: tmp_path / "missing.toml")
+    assert humanize_settings()["model"] == "llama3.1"
