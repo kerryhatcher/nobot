@@ -1,0 +1,54 @@
+[project]
+name = "nobots"
+version = "0.1.0"
+description = "Detect AI-sounding prose, analyze stylometry, and humanize writing — one engine behind a CLI, TUI, MCP server, and Claude Code plugin."
+authors = [{ name = "Kerry Hatcher", email = "kerry@kerryhatcher.com" }]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["writing", "ai-detection", "editing", "style", "prose"]
+dependencies = [
+    "typer>=0.12",
+    "lexicalrichness>=0.5",
+    "textstat>=0.7",
+]
+
+[project.optional-dependencies]
+# spaCy stack — documents (does not enforce) a Python ==3.12.* range.
+analyze = [
+    "textdescriptives>=2.8",
+    "pybiber>=0.1",
+    "click",
+    "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
+]
+# torch/transformers — documents (does not enforce) a Python ==3.12.* range; ~5GB HF weights.
+models = ["torch>=2.2", "transformers>=4.40"]
+tui = ["textual>=0.60"]
+mcp = ["mcp>=1.0"]
+humanize = ["pydantic-ai>=0.0.14"]
+all = [
+    "nobots[analyze]",
+    "nobots[models]",
+    "nobots[tui]",
+    "nobots[mcp]",
+    "nobots[humanize]",
+]
+
+[project.scripts]
+nobots = "nobots.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/kerryhatcher/nobots"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nobots"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[dependency-groups]
+dev = ["pytest>=8"]
