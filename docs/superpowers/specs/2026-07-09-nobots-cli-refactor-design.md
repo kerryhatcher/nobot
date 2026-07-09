@@ -135,6 +135,12 @@ base_url = "http://localhost:11434/v1"
 
 Precedence: CLI flag > config file > built-in default. Missing config = Ollama defaults.
 
+## Housekeeping
+
+- **Repo rename:** the git remote/repo is currently named `nobot` (singular); rename to
+  `nobots` to match the package and PyPI name. Update `project_urls` and any
+  `uvx --from git+<repo-url>` dev references after the rename.
+
 ## Error handling
 
 - `detect` fails open (exit 0) on any unexpected error — a hook bug must never block a Write/Edit.
