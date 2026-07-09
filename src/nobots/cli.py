@@ -140,6 +140,16 @@ def humanize(
         typer.echo(rewritten)
 
 
+@app.command()
+def tui():
+    """Live TUI for AI-tell detection. Requires [tui]."""
+    try:
+        from nobots.tui.app import run_tui
+    except ImportError:
+        raise _missing_extra("tui", "tui")
+    run_tui()
+
+
 @app.callback()
 def _root(
     guide: bool = typer.Option(False, "--guide", help="Print the packaged field guide and exit."),
