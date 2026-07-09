@@ -45,7 +45,7 @@ nobots/
       prose.py                 # clean_prose + prose_windows — shared prep for all detectors
       detect.py                # from check_ai_tells.py — quorum engine, pure functions
       stylometry.py            # from deep_stylometry.py — deep analysis, pure functions
-      models.py                # from local-ai-detectors/detect.py — 4 model-based detectors
+      models.py                # 4 model-based detectors (Binoculars/Fast-DetectGPT/GLTR/RoBERTa)
       guide.py                 # loads packaged field-guide text
     humanize/
       agent.py                 # Pydantic AI agent, pluggable model
@@ -80,8 +80,7 @@ CLI framework: **Typer**.
   HTML comments, tables, images/links/inline-code, and markdown markers down to plain
   prose; `prose_windows(text, words=300)` splits into fixed-word windows. How used: every
   detector runs on cleaned prose so markdown noise doesn't skew signals; `score` averages
-  per-window for long inputs that exceed model token caps. Pure, stdlib-only. Folded in
-  from `local-ai-detectors/detect.py`.
+  per-window for long inputs that exceed model token caps. Pure, stdlib-only.
 - **`core/detect.py`** — What: takes prose text, returns a structured result
   (per-family votes, quorum decision, stylometric context: MTLD, Flesch-Kincaid,
   LZMA ratio). How used: `detect_text(text) -> DetectResult`. Depends on:
@@ -97,7 +96,6 @@ CLI framework: **Typer**.
   the heavy `[models]` extra (`torch`, `transformers`; ~5GB HF weights cached in
   `~/.cache/huggingface`; Python 3.12 range for torch wheels). No verdict — raw numbers
   plus a documented AI-direction per detector; scores are relative, not calibrated cutoffs.
-  Folded in from `local-ai-detectors/detect.py`.
 - **`core/guide.py`** — What: returns packaged guide markdown. Used by MCP/skills/`--guide`.
 - **`humanize/agent.py`** — What: Pydantic AI agent that rewrites prose to remove tells,
   grounded in the guide. How used: `humanize_text(text, model) -> str`. Default model
@@ -175,8 +173,7 @@ Precedence: CLI flag > config file > built-in default. Missing config = Ollama d
 `pytest` unit tests over the pure core:
 
 - `test_prose.py` — `clean_prose` strips frontmatter/code/tables/markdown and keeps real
-  sentences; `prose_windows` splits at the requested word count (ported from the folded-in
-  script's self-test asserts).
+  sentences; `prose_windows` splits at the requested word count.
 - `test_detect.py` — a known AI-ish sample crosses the quorum (exit-2 semantics via the
   result object); a known human sample does not; single-family input abstains.
 - `test_stylometry.py` — analysis returns expected keys and sane ranges on a fixture.
@@ -193,10 +190,10 @@ No frameworks beyond pytest; no fixtures beyond small inline samples.
 
 1. `check_ai_tells.py` → `core/detect.py` (split pure logic from stdin/exit shim).
 2. `deep_stylometry.py` → `core/stylometry.py`.
-3. `local-ai-detectors/detect.py` (external research folder) → split into `core/models.py`
-   (the 4 detectors + `score_text`) and `core/prose.py` (`clean_prose`, `prose_windows`);
-   its `--selftest` asserts become `test_models.py`/`test_prose.py`. Wire `clean_prose`
-   into `detect`/`analyze` so all detectors share prose prep.
+3. Model-based detector logic → `core/models.py` (the 4 detectors + `score_text`) and
+   `core/prose.py` (`clean_prose`, `prose_windows`), with accompanying
+   `test_models.py`/`test_prose.py`. Wire `clean_prose` into `detect`/`analyze` so all
+   detectors share prose prep.
 4. `ai-writing-guide.md`, `ai-detection-tools.md` → `src/nobots/data/`.
 5. Move plugin assets under `plugin/`; add `hook_detect.py` shim; repoint `hooks.json`.
 6. Delete the old standalone scripts once the hook shim is proven end-to-end.
@@ -207,5 +204,5 @@ No frameworks beyond pytest; no fixtures beyond small inline samples.
 - Plugin invokes CLI via `uvx`.
 - Humanize: Pydantic AI, pluggable, default local Ollama, error if down.
 - Packaging: optional extras + `[all]`.
-- Fold in `local-ai-detectors`: model-based `score` command behind `[models]` extra;
-  adopt `clean_prose`/`prose_windows` as shared prose prep for every detector.
+- Model-based `score` command behind `[models]` extra; adopt `clean_prose`/`prose_windows`
+  as shared prose prep for every detector.
