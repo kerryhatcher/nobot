@@ -118,7 +118,9 @@ A subcommand whose extra is missing prints a one-line install hint (e.g.
   `uvx --from <source> nobots detect FILE`, and propagates the exit code (2 → nudge,
   0 → silent). Fails open on any error, exactly like today.
 - **Skills / agents**: instruct the agent to call `uvx nobots detect|analyze|humanize`.
-- `<source>` is `git+<repo-url>` until published, then the `nobots` PyPI name.
+- `<source>` = the `nobots` PyPI name (`uvx nobots detect ...`). Name confirmed
+  available on PyPI (2026-07-09). During pre-publish dev, hooks/skills may use
+  `uvx --from git+<repo-url> nobots` until the first release is cut.
 
 ## Config
 
