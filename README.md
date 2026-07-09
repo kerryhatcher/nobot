@@ -143,7 +143,7 @@ Only agents can pin themselves to a model tier, so detection is split in two: `a
 
 ## The field guide
 
-Two reference docs, packaged with the CLI under `src/nobots/data/`, are the source of truth the rest cites. Print them any time with `nobots --guide` (see the quirk noted in the command table above):
+Two reference docs, packaged with the CLI under `src/nobots/data/`, are the source of truth the rest cites. Print them any time with `nobots --guide`:
 
 - **`ai-writing-guide.md`** maps the vocabulary, statistical, and content signatures of AI text, with a practical playbook for avoiding them.
 - **`ai-detection-tools.md`** catalogs open-source and offline detectors, free-tier commercial APIs, and benchmark pointers.
