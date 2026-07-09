@@ -1,8 +1,8 @@
 # src/nobots/cli.py
 """Typer CLI. Owns exit codes, --json, and missing-extra install hints."""
 
+import importlib.util
 import json
-import sys
 from pathlib import Path
 
 import typer
@@ -88,6 +88,10 @@ def score(
         from nobots.core.models import score_text
     except ImportError:
         raise _missing_extra("models", "score")
+    # score_text imports torch lazily, so the top-level import above succeeds even
+    # when [models] isn't installed; probe explicitly so we still emit the hint.
+    if importlib.util.find_spec("torch") is None or importlib.util.find_spec("transformers") is None:
+        raise _missing_extra("models", "score")
     from nobots.core.prose import clean_prose, prose_windows
 
     if not file.is_file():
@@ -122,6 +126,10 @@ def humanize(
     try:
         built = build_default_model(settings)
         rewritten = humanize_text(_read(file), model=built)
+    except (ModuleNotFoundError, ImportError):
+        # build_default_model imports pydantic_ai lazily, so a missing [humanize]
+        # extra surfaces here rather than at the top-level import above.
+        raise _missing_extra("humanize", "humanize")
     except RuntimeError as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(code=1)
