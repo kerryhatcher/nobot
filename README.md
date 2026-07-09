@@ -84,7 +84,7 @@ Restart the session afterward so the hook loads. The plugin's hook and skills do
 | `nobots humanize FILE [--model M] [--in-place]` | Rewrites the file through a pydantic-ai agent, local Ollama by default. `--in-place` overwrites; otherwise prints to stdout. Extra: `humanize`. |
 | `nobots tui` | Launches the Textual live-scan UI. Extra: `tui`. |
 | `nobots mcp` | Launches an MCP server exposing detect/analyze/score/humanize as tools. Extra: `mcp`. |
-| `nobots --guide` | Prints the packaged field guide and exits. (Typer quirk: a subcommand token is still required syntactically, so invoke it as e.g. `nobots --guide detect .` — the callback exits before that subcommand ever runs.) |
+| `nobots --guide` | Prints the packaged field guide and exits. |
 
 Missing an extra? Every gated command prints the exact `uvx --from 'nobots[extra]' nobots CMD` install line to stderr and exits non-zero instead of stack-tracing.
 

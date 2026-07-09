@@ -50,3 +50,18 @@ def test_humanize_runtime_error_stays_clean_message(tmp_path, monkeypatch):
     assert result.exit_code == 1
     assert "Ollama unreachable" in result.output
     assert "needs the humanize extra" not in result.output
+
+
+def test_guide_bare_no_subcommand():
+    from nobots.core.guide import load_guide
+
+    expected_snippet = load_guide().strip().splitlines()[0]
+    result = runner.invoke(app, ["--guide"])
+    assert result.exit_code == 0
+    assert expected_snippet in result.output
+
+
+def test_bare_invocation_shows_help():
+    result = runner.invoke(app, [])
+    assert result.exit_code == 0
+    assert "detect" in result.output

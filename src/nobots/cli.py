@@ -160,12 +160,16 @@ def mcp():
     run_server()
 
 
-@app.callback()
+@app.callback(invoke_without_command=True)
 def _root(
+    ctx: typer.Context,
     guide: bool = typer.Option(False, "--guide", help="Print the packaged field guide and exit."),
 ):
     if guide:
         from nobots.core.guide import load_guide
 
         typer.echo(load_guide())
+        raise typer.Exit(code=0)
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
         raise typer.Exit(code=0)
