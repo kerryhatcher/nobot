@@ -12,6 +12,8 @@ Analyze a piece of text against the vocabulary, statistical, and content-level f
 
 If the argument looks like a file path, read it with the Read tool. If it looks like inline pasted text, use it directly. If no argument was given, ask the user what to analyze rather than guessing.
 
+For a fast automated pre-check on a file (the same quorum tell-scan the plugin's PostToolUse hook runs), `uvx nobots detect FILE` exits 2 if tells were found and 0 if clean, printing a nudge with the specific signals to stderr. Treat it as a cheap first pass, not a replacement for the fuller read below.
+
 Then route by scope and by what this conversation is already paying for:
 
 - **Single passage or file, roughly under 500 words, and this conversation is running on a model above haiku**: dispatch the scoring work to the `ai-tell-quickcheck` agent (haiku) instead of doing it inline. It's a rote pattern-matching pass; there's no reason to spend this conversation's tokens on it. Take its returned report straight into Step 5.
@@ -43,7 +45,7 @@ Remember the ceiling: paraphrase and a genuine human edit collapse most detector
 
 ## Step 3: Weigh the evidence, don't just tally it (inline path only)
 
-Per the underlying research (`$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md`), vocabulary tells are the weakest and most time-bound signal — treat them as corroborating, not decisive. Structural signals (low sentence-length variation, high dependent-clause density, near-zero rhetorical questions, em-dash frequency) and content-level signals (superficiality, absence of voice, ghost citations) are more robust and should carry more weight. A text with zero banned words can still be heavily AI-patterned structurally, and a human writer can legitimately use words like "utilize" or "delve" a handful of times — isolated hits are not evidence on their own.
+Per the underlying research (run `uvx nobots --guide` to print the packaged field guide), vocabulary tells are the weakest and most time-bound signal — treat them as corroborating, not decisive. Structural signals (low sentence-length variation, high dependent-clause density, near-zero rhetorical questions, em-dash frequency) and content-level signals (superficiality, absence of voice, ghost citations) are more robust and should carry more weight. A text with zero banned words can still be heavily AI-patterned structurally, and a human writer can legitimately use words like "utilize" or "delve" a handful of times — isolated hits are not evidence on their own.
 
 ## Step 4: Report a confidence tier, not a verdict
 
@@ -56,10 +58,10 @@ Produce (or relay, if `ai-tell-quickcheck` already produced one) a structured re
 
 ## Step 5: Recommend a tool when the read is borderline
 
-If the text is long-form, high-stakes, or the manual read lands in "mixed signals," recommend a specific external check rather than pushing the manual analysis further. Consult `$CLAUDE_PLUGIN_ROOT/ai-detection-tools.md` for current free-tier APIs (GPTZero, Winston AI, Copyleaks, Sapling, ZeroGPT, Pangram, Hugging Face-hosted classifiers) and open-source/offline options, and name the one or two best suited to the text's length and stakes. This skill does not call those APIs itself — it points to them.
+If the text is long-form, high-stakes, or the manual read lands in "mixed signals," recommend a specific external check rather than pushing the manual analysis further. Consult `uvx nobots --guide` (packaged field guide, includes the tools appendix) for current free-tier APIs (GPTZero, Winston AI, Copyleaks, Sapling, ZeroGPT, Pangram, Hugging Face-hosted classifiers) and open-source/offline options, and name the one or two best suited to the text's length and stakes. This skill does not call those APIs itself — it points to them.
 
 ## Step 6: Deep stylometric analysis (only when explicitly requested)
 
-If the user explicitly asks for a "detailed," "deep," or "thorough" analysis (rather than the default quick read), run `$CLAUDE_PLUGIN_ROOT/scripts/deep_stylometry.py <file-path-or-->` via Bash. It uses spaCy, textdescriptives, and pybiber to compute real burstiness, lexical diversity (MTLD-style), dependency-clause complexity, POS proportions, readability grade level, entropy-per-token, and a curated set of Biber register features — actual measurements, not the eyeballed proxies from Steps 2-3. Fold its output into the report as corroborating evidence, using its own field-level `relevance` annotations to explain what each number means; its `notes` field spells out what it deliberately doesn't claim (no calibrated cutoffs, no LLM-equivalent perplexity).
+If the user explicitly asks for a "detailed," "deep," or "thorough" analysis (rather than the default quick read), run `uvx --from 'nobots[analyze]' nobots analyze <file-path-or-->` via Bash. It uses spaCy, textdescriptives, and pybiber to compute real burstiness, lexical diversity (MTLD-style), dependency-clause complexity, POS proportions, readability grade level, entropy-per-token, and a curated set of Biber register features — actual measurements, not the eyeballed proxies from Steps 2-3. Fold its output into the report as corroborating evidence, using its own field-level `relevance` annotations to explain what each number means; its `notes` field spells out what it deliberately doesn't claim (no calibrated cutoffs, no LLM-equivalent perplexity).
 
 Warn the user before running it the first time on a machine: it installs a real dependency set (spaCy, a language model, textdescriptives, pybiber) and can take 1-3 minutes on that first call, then is fast on every call after (`uv` caches it). Never invoke this automatically for the default case — it's opt-in rigor, not the standard path, and it does not apply to `ai-tell-quickcheck`, which deliberately stays cheap.

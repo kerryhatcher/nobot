@@ -1,36 +1,10 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = "==3.12.*"
-# dependencies = [
-#     "textdescriptives",
-#     "pybiber",
-#     "click",
-#     "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
-# ]
-# ///
-"""Deep stylometric analysis for detect-ai-writing / ai-tell-reviewer / ai-tell-quickcheck.
+"""Deep spaCy/textdescriptives/pybiber stylometry. Ported from deep_stylometry.py.
 
-Not a hook. This pulls in spaCy plus a downloaded language model, textdescriptives,
-and pybiber, so first invocation is a real install (a couple hundred MB, roughly
-1-3 minutes depending on connection) that uv then caches for near-instant reuse.
-Never call this from the PostToolUse hook, which needs to be pure and fast on
-every single Write/Edit; call it from an agent or skill on explicit request for a
-thorough read instead.
-
-Emits a JSON report of raw measurements to stdout for the calling agent/skill to
-interpret against $CLAUDE_PLUGIN_ROOT/ai-writing-guide.md. This script does not
-compute a verdict or confidence tier itself -- it has no opinion about what counts
-as "too AI-sounding," only numbers. The `click` dependency works around a real
-upstream bug: spaCy's CLI module imports click directly but newer releases of
-typer (which spaCy declares instead) no longer pull click in transitively.
-
-Usage:
-    ./deep_stylometry.py path/to/file.md
-    cat notes.txt | ./deep_stylometry.py -
+Raw measurements only — no verdict. Requires the [analyze] extra (spaCy +
+en_core_web_sm, pinned to the Python 3.12 range). Pure: no argv/stdin/exit.
 """
 
-import json
-import sys
+import json  # noqa: F401  (kept for parity; callers may json.dumps the dict)
 
 # Curated subset of pybiber's 67 Biber features that map onto specific claims in
 # ai-writing-guide.md, rather than dumping all 67 (most of which have no discussed
@@ -52,13 +26,6 @@ BIBER_FEATURES_OF_INTEREST = {
     "f_48_amplifiers": "intensifiers (guide: 'importance inflation' tell)",
     "f_59_contractions": "contraction rate (guide: AI avoids contractions, elevating formality)",
 }
-
-
-def load_text(arg: str) -> str:
-    if arg == "-":
-        return sys.stdin.read()
-    with open(arg, encoding="utf-8", errors="ignore") as f:
-        return f.read()
 
 
 def run_textdescriptives(text: str) -> dict:
@@ -132,53 +99,20 @@ def run_biber(text: str, doc_id: str) -> dict:
     return subset
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        print(json.dumps({"error": "usage: deep_stylometry.py <file-path|->"}), file=sys.stderr)
-        return 1
-
-    arg = sys.argv[1]
-    try:
-        text = load_text(arg)
-    except OSError as e:
-        print(json.dumps({"error": f"could not read input: {e}"}), file=sys.stderr)
-        return 1
-
+def analyze_text(text: str, doc_id: str = "input") -> dict:
     word_count = len(text.split())
     if word_count < 20:
-        print(json.dumps({"error": f"input too short for stylometric analysis ({word_count} words, need 20+)"}))
-        return 1
-
-    try:
-        report = {
-            "source": arg,
-            "word_count": word_count,
-            "textdescriptives": run_textdescriptives(text),
-            "biber_features": run_biber(text, arg),
-            "notes": (
-                "Raw measurements only, no verdict computed here. Interpret against "
-                "$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md. textdescriptives' own "
-                "'perplexity'/'per_word_perplexity' fields are dropped from this "
-                "report: they exponentiate a per-token entropy *sum* rather than a "
-                "proper per-token log-space average, so they explode to nonsense "
-                "values on anything longer than a short paragraph. Use "
-                "derived.entropy_per_token instead, and even that is based on "
-                "static unigram word frequencies, not an LLM's contextual "
-                "probabilities -- a much weaker, indirect proxy than the perplexity "
-                "the guide discusses for actual model detection. Biber features are "
-                "normalized per 1000 tokens except type_token and mean_word_length; "
-                "no calibrated human/AI cutoff exists for any single value here, "
-                "weigh them as corroborating context only, same as burstiness_ratio "
-                "and content_to_function_word_ratio."
-            ),
-        }
-    except Exception as e:
-        print(json.dumps({"error": f"analysis failed: {type(e).__name__}: {e}"}), file=sys.stderr)
-        return 1
-
-    print(json.dumps(report, indent=2))
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+        raise ValueError(f"input too short for stylometric analysis ({word_count} words, need 20+)")
+    return {
+        "word_count": word_count,
+        "textdescriptives": run_textdescriptives(text),
+        "biber_features": run_biber(text, doc_id),
+        "notes": (
+            "Raw measurements only, no verdict computed here. Biber features are "
+            "normalized per 1000 tokens except type_token and mean_word_length; "
+            "no calibrated human/AI cutoff exists for any single value — weigh them "
+            "as corroborating context only. textdescriptives' own perplexity fields "
+            "are omitted (they exponentiate an entropy sum and explode on long text); "
+            "use derived.entropy_per_token, itself only a static-unigram proxy."
+        ),
+    }

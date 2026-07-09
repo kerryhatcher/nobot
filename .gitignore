@@ -1,2 +1,9 @@
 .claude/
 __pycache__/
+.venv/
+
+# Local research notes (not tracked)
+docs/research/
+
+# graphify knowledge-graph output (generated)
+graphify-out/

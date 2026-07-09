@@ -8,7 +8,9 @@ Produce prose that reads as authentically human by eliminating the vocabulary, s
 
 ## Why this matters
 
-LLM output carries measurable signatures: predictable word choices, uniform sentence rhythm, low perplexity, content that sounds profound but says little. These aren't style quirks. They're the actual features detection tools and skeptical readers key on. The full research behind every rule below lives in `$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md`. Consult it when a judgment call needs more grounding than the summary here provides, for example when deciding whether a specific statistic or hedge is safe to keep.
+LLM output carries measurable signatures: predictable word choices, uniform sentence rhythm, low perplexity, content that sounds profound but says little. These aren't style quirks. They're the actual features detection tools and skeptical readers key on. The full research behind every rule below is in the packaged field guide — run `uvx nobots --guide` to print it. Consult it when a judgment call needs more grounding than the summary here provides, for example when deciding whether a specific statistic or hedge is safe to keep.
+
+For an automated rewrite pass instead of a manual one, `uvx --from 'nobots[humanize]' nobots humanize FILE` runs a Pydantic AI-driven humanizer over the text.
 
 ## Eliminate the vocabulary fingerprint
 
@@ -91,4 +93,4 @@ Skip the effort here. Swapping one flagged word for a synonym while leaving the 
 
 ## When in doubt
 
-For deeper grounding on any specific claim above, whether a rule still holds, what the research actually measured, or how confident to be about a given tell, read `$CLAUDE_PLUGIN_ROOT/ai-writing-guide.md`. It documents the vocabulary, statistical (perplexity/burstiness), and content-level signatures in full, with sourcing and caveats about which signals are well-validated versus internet folklore.
+For deeper grounding on any specific claim above, whether a rule still holds, what the research actually measured, or how confident to be about a given tell, run `uvx nobots --guide`. It documents the vocabulary, statistical (perplexity/burstiness), and content-level signatures in full, with sourcing and caveats about which signals are well-validated versus internet folklore.
